@@ -9,7 +9,7 @@ const Allcourses = () => {
     }, []);
 
     const[courses, setCourses] = useState([
-        {title:"JavaScript Course", description:"This is just for beginner's, who want to learn JavaScript."},
+        {title:"test-quiz-1", description:"This is just for beginner's, who want to learn JavaScript."},
         {title:"New Java Course", description:"This is just for beginner's, who want to learn Java."},
         {title:"New ReactJs Course", description:"This is just for beginner's, who want to learn ReactJs."}
     ])
