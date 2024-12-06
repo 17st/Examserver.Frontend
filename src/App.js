@@ -8,6 +8,7 @@ import Allcourses from './components/Allcourses';
 import AddCourse from './components/Addcourse';
 import Header from './components/Header';
 import Menus from './components/Menus';
+import createTest from './components/createTest';
 import {  BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
             <Route path='/' Component={Home} exact/> 
             <Route path='/add-course' Component={AddCourse} exact/>
             <Route path='/view-course' Component={Allcourses} exact/>
+            <Route path='/create-test' Component={createTest} exact/>
           </Routes>
           </Col>
         </Row>
