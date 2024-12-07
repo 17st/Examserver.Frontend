@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 
-const NavigationBar = ({ disableLiveContest }) => {
+const NavigationBar = () => {
     return (
         <Navbar color="dark" dark expand="md">
             <NavbarBrand tag={Link} to="/">Exam Portal</NavbarBrand>
