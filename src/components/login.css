@@ -1,0 +1,54 @@
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+.h-custom {
+  height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+  .h-custom {
+  height: 100%;
+  }
+}
+
+/* login.css */
+
+.full-screen-container {
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h3 {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .form-container {
+    width: 100%;
+    max-width: 450px; /* Limit max width of the form */
+    margin: 0 auto;
+  }
+  
+  .text-center {
+    text-align: center;
+  }
+  
+  .text-md-start {
+    text-align: left;
+  }
+  
+  .mb-0 {
+    margin-bottom: 0;
+  }
+  
+  .px-5 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  

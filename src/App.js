@@ -12,7 +12,10 @@ import {  BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import QuizPage from './components/QuizPage';
 import NavigationBar from "./components/Navbar"; // Import the new Navbar
 import ResultsPage from "./components/ResultsPage";
-import PracticeTest from './components/PracticeTest';
+
+import Login from './components/login';
+import Register from './components/Register';
+
 
 function App() {
 
@@ -47,6 +50,8 @@ function App() {
             <Route path="/quiz/:quizId" element={<QuizPage />} />
             <Route path="/practice-test" element={<PracticeTest />} />
             <Route path="/results" element={<ResultsPage />} /> {/* New Route */}
+            <Route path="/login" element={<Login/>} />
+            <Route path="/register" element={<Register/>}/>
           </Routes>
           {/* </Col> */}
         </Row>
