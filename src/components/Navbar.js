@@ -1,10 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from 'reactstrap';
 
 const NavigationBar = () => {
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const fromDuplicateTab = searchParams.get('fromDuplicateTab');
+
     return (
         <Navbar color="dark" dark expand="md">
+            {fromDuplicateTab ? (
+                <NavbarBrand className="text-center w-100" >You are now in quiz mode. Stay focused!</NavbarBrand>
+            ) : (
+                <>
             <NavbarBrand tag={Link} to="/">Exam Portal</NavbarBrand>
             <Nav className="ms-auto" navbar>
                 <NavItem>
@@ -26,6 +35,8 @@ const NavigationBar = () => {
                     <NavLink tag={Link} to="#!">Contact</NavLink>
                 </NavItem>
             </Nav>
+        </>
+            )}
         </Navbar>
     );
 };
