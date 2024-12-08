@@ -15,6 +15,8 @@ import {  BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import QuizPage from './components/QuizPage';
 import NavigationBar from "./components/Navbar"; // Import the new Navbar
 import ResultsPage from "./components/ResultsPage";
+import Login from './components/login';
+import Register from './components/Register';
 
 function App() {
 
@@ -47,6 +49,8 @@ function App() {
             <Route path='/create-test' Component={createTest} exact/>
             <Route path="/quiz/:quizId" element={<QuizPage />} />
             <Route path="/results" element={<ResultsPage />} /> {/* New Route */}
+            <Route path="/login" element={<Login/>} />
+            <Route path="/register" element={<Register/>}/>
           </Routes>
           {/* </Col> */}
         </Row>
