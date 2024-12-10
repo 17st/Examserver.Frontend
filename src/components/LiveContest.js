@@ -2,7 +2,7 @@ import React, { useState, useEffect} from "react";
 import Course from "./course";
 import { Button } from "reactstrap";
 
-const Allcourses = () => {
+const LiveQuizzez = () => {
 
     useEffect(() => {
         document.title = "All Courses";
@@ -28,4 +28,4 @@ const Allcourses = () => {
     );
 }
 
-export default Allcourses;
+export default LiveQuizzez;

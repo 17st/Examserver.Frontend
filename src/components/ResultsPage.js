@@ -1,17 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Container } from "reactstrap";
+import axios from "axios";
 
 const ResultsPage = () => {
-  // Sample data
-  const results = Array.from({ length: 100 }, (_, index) => ({
-    name: `Student ${index + 1}`,
-    rank: index + 1,
-    score: Math.floor(Math.random() * 100),
-    totalMarks: 100,
-  }));
-
+  const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 10;
+
+  useEffect(() => {
+    // Fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8808/api/test-results/showTestResult?testId=2"
+        );
+        setResults(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const totalPages = Math.ceil(results.length / resultsPerPage);
   const startIndex = (currentPage - 1) * resultsPerPage;
@@ -33,18 +42,30 @@ const ResultsPage = () => {
         <thead>
           <tr>
             <th>Name</th>
+            <th>Submitted Time</th>
             <th>Rank</th>
-            <th>Score</th>
-            <th>Total Marks</th>
+            <th>Marks</th>
+            <th>Answer Sheet Link</th>
+            <th>Time Duration (mins)</th>
           </tr>
         </thead>
         <tbody>
           {currentResults.map((result, index) => (
             <tr key={index}>
               <td>{result.name}</td>
+              <td>{result.submittedTime}</td>
               <td>{result.rank}</td>
-              <td>{result.score}</td>
-              <td>{result.totalMarks}</td>
+              <td>{result.marks}</td>
+              <td>
+                {result.answerSheetLink ? (
+                  <a href={result.answerSheetLink} target="_blank" rel="noopener noreferrer">
+                    View
+                  </a>
+                ) : (
+                  "N/A"
+                )}
+              </td>
+              <td>{result.timeDuration || "N/A"}</td>
             </tr>
           ))}
         </tbody>
@@ -53,7 +74,9 @@ const ResultsPage = () => {
         <Button color="primary" onClick={handlePrev} disabled={currentPage === 1}>
           Previous
         </Button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
         <Button color="primary" onClick={handleNext} disabled={currentPage === totalPages}>
           Next
         </Button>

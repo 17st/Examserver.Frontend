@@ -15,7 +15,7 @@ import ResultsPage from "./components/ResultsPage";
 
 import Login from './components/login';
 import Register from './components/Register';
-
+import PracticeTest from './components/PracticeTest'
 
 function App() {
 

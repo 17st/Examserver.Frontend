@@ -6,8 +6,8 @@ import './login.css';  // Include your CSS
 
 function Login() {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    userNameOrEmail: '',
+    userPass: '',
   });
 
   const [errorMessage, setErrorMessage] = useState('');  // To display error message
@@ -29,7 +29,7 @@ function Login() {
 
     try {
       // Make API call to backend login endpoint
-      const response = await axios.post('http://localhost:8080/api/auth/login', formData);
+      const response = await axios.get('http://localhost:8808/api/users/login_user', formData);
 
       if (response.data.success) {
         // If login is successful, navigate to the dashboard or home page
@@ -83,22 +83,22 @@ function Login() {
           <form onSubmit={handleSubmit}>
             <MDBInput
               wrapperClass="mb-4"
-              label="Email address"
+              label="userNameOrEmail address"
               id="formControlLg"
-              type="email"
-              name="email"
+              type="userNameOrEmail"
+              name="userNameOrEmail"
               size="lg"
-              value={formData.email}
+              value={formData.userNameOrEmail}
               onChange={handleChange}
             />
             <MDBInput
               wrapperClass="mb-4"
-              label="Password"
+              label="userPass"
               id="formControlLg"
-              type="password"
-              name="password"
+              type="userPass"
+              name="userPass"
               size="lg"
-              value={formData.password}
+              value={formData.userPass}
               onChange={handleChange}
             />
 
@@ -109,7 +109,7 @@ function Login() {
                 id="flexCheckDefault"
                 label="Remember me"
               />
-              <a href="!#">Forgot password?</a>
+              <a href="!#">Forgot userPass?</a>
             </div>
 
             {/* Display Error Message */}
