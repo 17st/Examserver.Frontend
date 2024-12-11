@@ -139,7 +139,7 @@ const CreateTest = () => {
               onChange={handleChange}
             />
             </FormGroup>
-            <button type="submit">Create</button>
+            <button type="submit sm">Create</button>
           </form>
           {response && (
             <div>

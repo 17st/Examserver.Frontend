@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
-import './App.css';
-import { Button, Col, Container, Row } from 'reactstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import Home from './components/Home';
-import Allcourses from './components/LiveContest';
-import AddCourse from './components/Addcourse';
-import Header from './components/Header';
-import LiveContest from './components/LiveContest'
-import createTest from './components/createTest';
-import {  BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import QuizPage from './components/QuizPage';
-import NavigationBar from "./components/Navbar"; // Import the new Navbar
+import React, { useState } from "react";
+import "./App.css";
+import { ToastContainer, toast } from "react-toastify";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import useLocation from react-router-dom
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import Home from "./components/Home";
+import Allcourses from "./components/LiveContest";
+import AddCourse from "./components/Addcourse";
+import Header from "./components/Header";
+import LiveContest from "./components/LiveContest";
+import CreateTest from "./components/createTest";
+import QuizPage from "./components/QuizPage";
+import NavigationBar from "./components/Navbar";
 import ResultsPage from "./components/ResultsPage";
+import PracticeTest from "./components/PracticeTest";
+import Login from "./components/login";
+import Register from "./components/Register";
+import "react-phone-number-input/style.css";
 
-import Login from './components/login';
-import Register from './components/Register';
+const clientId = "YOUR_GOOGLE_CLIENT_ID"; // Replace with your Google OAuth client ID
 
-
+// Define the main App component
 function App() {
-
-
   const [disableLiveContest, setDisableLiveContest] = useState(false);
 
   const btnhandle = () => {
@@ -29,35 +30,29 @@ function App() {
   };
 
   return (
-    <div>
+    <GoogleOAuthProvider clientId={clientId}>
       <Router>
-      <ToastContainer/>
-      <Header/>
-      <NavigationBar /> {/* Add the navigation bar */}
-      <Container>
+        <div>
+          <Header />
+          <NavigationBar />
+          {/* Render the rest of the content */}
+          <ToastContainer />
 
-        <Row>
-          {/* <Col md={4}>
-            <Menus/>
-          </Col>
-          <Col md={8}> */}
           <Routes>
-            <Route path='/' Component={Home} exact/> 
-            <Route path='/add-course' Component={AddCourse} exact/>
-            <Route path='/view-course' Component={Allcourses} exact/>
-            <Route path='/live-contest' Component={LiveContest} exact/>
-            <Route path='/create-test' Component={createTest} exact/>
+            <Route path="/" element={<Home />} />
+            <Route path="/add-course" element={<AddCourse />} />
+            <Route path="/view-course" element={<Allcourses />} />
+            <Route path="/live-contest" element={<LiveContest />} />
+            <Route path="/create-test" element={<CreateTest />} />
             <Route path="/quiz/:quizId" element={<QuizPage />} />
             <Route path="/practice-test" element={<PracticeTest />} />
-            <Route path="/results" element={<ResultsPage />} /> {/* New Route */}
-            <Route path="/login" element={<Login/>} />
-            <Route path="/register" element={<Register/>}/>
+            <Route path="/results" element={<ResultsPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
-          {/* </Col> */}
-        </Row>
-      </Container>
+        </div>
       </Router>
-    </div>
+    </GoogleOAuthProvider>
   );
 }
 
