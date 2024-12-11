@@ -13,6 +13,8 @@ function Login() {
   const [loginSuccess, setLoginSuccess] = useState(null);
   const [token, setToken] = useState(null);
 
+
+
   // State to handle the Forgot Password form view
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -138,7 +140,8 @@ function Login() {
               >
               Forgot Password?
               </Button>
-            </div>
+
+             </div>
             <div className="text-center mt-3">
               <p>Don't have an account?</p>
               <Button variant="link" onClick={handleGoToRegister}>
