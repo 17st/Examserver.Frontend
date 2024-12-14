@@ -5,7 +5,6 @@ import { HashRouter as Router, Route, Routes } from "react-router-dom"; // Impor
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "./components/Home";
 import Allcourses from "./components/LiveContest";
-import AddCourse from "./components/Addcourse";
 import Header from "./components/Header";
 import LiveContest from "./components/LiveContest";
 import CreateTest from "./components/createTest";
@@ -41,7 +40,6 @@ function App() {
 
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/add-course" element={<AddCourse />} />
             <Route path="/view-course" element={<Allcourses />} />
             <Route path="/live-contest" element={<LiveContest />} />
             <Route path="/create-test" element={<CreateTest />} />

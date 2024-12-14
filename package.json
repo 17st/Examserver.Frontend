@@ -1,6 +1,6 @@
 {
   "homepage": "https://17st.github.io/Examserver.Frontend",
- "name": "Examserver",
+  "name": "Examserver",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
