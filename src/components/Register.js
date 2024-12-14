@@ -299,12 +299,16 @@ function Register() {
                 Already have an account?{' '}
                 <a
                   href="#!"
-                  onClick={() => navigate('/login')}
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevents default behavior
+                    navigate('/login');
+                  }}
                   className="link-danger"
                 >
                   Login
                 </a>
               </p>
+
             </div>
           </Form>
           <div className="d-flex align-items-center">
