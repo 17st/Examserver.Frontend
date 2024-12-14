@@ -4,7 +4,6 @@ import { Button, Col, Container, Row } from 'reactstrap';
 import { ToastContainer, toast } from 'react-toastify';
 import Home from './components/Home';
 import Allcourses from './components/LiveContest';
-import AddCourse from './components/Addcourse';
 import Header from './components/Header';
 import LiveContest from './components/LiveContest'
 import createTest from './components/createTest';
@@ -43,7 +42,6 @@ function App() {
           <Col md={8}> */}
           <Routes>
             <Route path='/' Component={Home} exact/> 
-            <Route path='/add-course' Component={AddCourse} exact/>
             <Route path='/view-course' Component={Allcourses} exact/>
             <Route path='/live-contest' Component={LiveContest} exact/>
             <Route path='/create-test' Component={createTest} exact/>

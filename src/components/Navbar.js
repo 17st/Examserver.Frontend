@@ -20,9 +20,6 @@ const NavigationBar = () => {
                     <NavLink tag={Link} to="/">Home</NavLink>
                 </NavItem>
                 <NavItem>
-                    <NavLink tag={Link} to="/add-course">Add Course</NavLink>
-                </NavItem>
-                <NavItem>
                     <NavLink tag={Link} to="/create-test">Create Quiz</NavLink>
                 </NavItem>
                 <NavItem>
