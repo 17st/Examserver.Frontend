@@ -1,149 +1,157 @@
 import React, { useState } from 'react';
-import { MDBContainer, MDBCol, MDBRow, MDBBtn, MDBIcon, MDBInput, MDBCheckbox } from 'mdb-react-ui-kit';
-import { useNavigate } from 'react-router-dom'; // To navigate to other pages
-import axios from 'axios';  // Axios for API calls
-import './login.css';  // Include your CSS
+import { Form, Button, Container, Row, Col } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom'; 
+import './login.css';
+import axios from 'axios';
+import ForgotPassword from './ForgotPassword'; 
 
 function Login() {
-  const [formData, setFormData] = useState({
-    userNameOrEmail: '',
-    userPass: '',
-  });
+  const [userNameOrEmail, setuserNameOrEmail] = useState('');
+  const [userPass, setuserPass] = useState('');
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const [errorMessage, setErrorMessage] = useState('');  // To display error message
-  const navigate = useNavigate();  // React Router hook to navigate
 
-  // Handle form input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+
+  // State to handle the Forgot Password form view
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+
+  const navigate = useNavigate(); // Initialize the navigate function for routing
+
+  const validateForm = () => {
+    const newErrors = {};
+  
+    // Validate userNameOrEmail (email or username)
+    if (!userNameOrEmail) {
+      newErrors.userNameOrEmail = 'Email or Username is required';
+    }
+  
+    // Validate password in one line
+    if (!userPass) {
+      newErrors.userPass = 'Password is required';
+    } else if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(userPass)) {
+      newErrors.userPass = "We couldn't find an account with that password.";
+    }
+  
+    return newErrors;
   };
+  
+  const handleuserPass = () => {};
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log('Form Data:', formData);  // Log the form data in JSON format
+  function delay(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-    try {
-      // Make API call to backend login endpoint
-      const response = await axios.get('http://localhost:8808/api/users/login_user', formData);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+    } else {
+      setErrors({});
+      setLoading(true);
+      console.log('Login attempted with:', { userNameOrEmail, userPass });
 
-      if (response.data.success) {
-        // If login is successful, navigate to the dashboard or home page
-        console.log('Login successful');
-        navigate('E:\React course\youtube_courses\src\components\Home.js');  // Redirect to home 
-      } else {
-        // If login failed, show error message
-        setErrorMessage(response.data.message);
+      // Send login request to Spring Boot API
+      try {
+        const response = await axios.get('http://localhost:8808/api/users/login_user', {
+          params: {
+            userNameOrEmail,  // Send data as query parameters
+            userPass,
+          },
+        });
+        console.log('Login response:', response);
+
+        if (response.status === 200) {
+          setLoginSuccess(true);
+          setToken(response.data.token); // Store the token (could store in localStorage)
+          alert('Login successful!');
+
+          // Redirect to the home page (or dashboard) after successful login
+          navigate('/Home');
+        }
+      } catch (error) {
+        console.error('Login failed:', error);
+        if (error.message === 'Network Error') {
+          setErrors({ general: 'Network error, please check if the backend is running' });
+        } else {
+          setErrors({ general: error.response?.data?.message || 'Login failed' });
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error during login:', error);
-      setErrorMessage('An error occurred. Please try again later.');
     }
   };
 
-  // Navigate to the register page
-  const goToRegister = () => {
-    navigate('/register');
+  const handleGoToRegister = () => {
+    navigate('/register'); // Redirect to register page if the user doesn't have an account
   };
 
   return (
-    <MDBContainer fluid className="p-3 my-5 h-custom">
-      <MDBRow>
-        <MDBCol col='10' md='6'>
-          <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-            className="img-fluid"
-            alt="Login"
-          />
-        </MDBCol>
-
-        <MDBCol col='4' md='6'>
-          <div className="d-flex flex-row align-items-center justify-content-center">
-            <p className="lead fw-normal mb-0 me-3">Sign in with</p>
-            <MDBBtn floating size='md' tag='a' className='me-2'>
-              <MDBIcon fab icon='facebook-f' />
-            </MDBBtn>
-            <MDBBtn floating size='md' tag='a' className='me-2'>
-              <MDBIcon fab icon='twitter' />
-            </MDBBtn>
-            <MDBBtn floating size='md' tag='a' className='me-2'>
-              <MDBIcon fab icon='google' />
-            </MDBBtn>
-          </div>
-
-          <div className="divider d-flex align-items-center my-4">
-            <p className="text-center fw-bold mx-3 mb-0">Or</p>
-          </div>
-
-          {/* Login Form Inputs */}
-          <form onSubmit={handleSubmit}>
-            <MDBInput
-              wrapperClass="mb-4"
-              label="userNameOrEmail address"
-              id="formControlLg"
-              type="userNameOrEmail"
-              name="userNameOrEmail"
-              size="lg"
-              value={formData.userNameOrEmail}
-              onChange={handleChange}
-            />
-            <MDBInput
-              wrapperClass="mb-4"
-              label="userPass"
-              id="formControlLg"
-              type="userPass"
-              name="userPass"
-              size="lg"
-              value={formData.userPass}
-              onChange={handleChange}
-            />
-
-            <div className="d-flex justify-content-between mb-4">
-              <MDBCheckbox
-                name="flexCheck"
-                value=""
-                id="flexCheckDefault"
-                label="Remember me"
+    <div className="login-wrapper">
+      <div className="login-form-container">
+       <h2 className="login-title">{showForgotPassword ? 'Forgot Password' : 'Login'}</h2>
+       {showForgotPassword ? (
+          // Show ForgotPassword component
+          <ForgotPassword onBackToLogin={() => setShowForgotPassword(false)} />
+        ) : (
+          // Show Login form
+          <Form onSubmit={handleSubmit} className="login-form">
+            <Form.Group className="mb-3" controlId="formBasicuserNameOrEmail">
+              <Form.Label>UserName Or Email address</Form.Label>
+              <Form.Control
+                type="userNameOrEmail"
+                placeholder="Enter UserName Or Email"
+                value={userNameOrEmail}
+                onChange={(e) => setuserNameOrEmail(e.target.value)}
+                isInvalid={!!errors.userNameOrEmail}
               />
-              <a href="!#">Forgot userPass?</a>
+               <Form.Control.Feedback type="invalid">
+              {errors.userNameOrEmail}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group className="mb-3" controlId="formBasicuserPass">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="userPass"
+                placeholder="Password"
+                value={userPass}
+                onChange={(e) => setuserPass(e.target.value)}
+                isInvalid={!!errors.userPass}
+                />
+                <Form.Control.Feedback type="invalid">
+                  {errors.userPass}
+                </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-2" controlId="checkbox">
+              <Form.Check type="checkbox" label="Remember me" />
+            </Form.Group>
+            <Button variant="primary" type="submit" className="login-button">
+              Login
+            </Button>
+            <div className="d-grid justify-content-end">
+              <Button
+                className="text-muted px-0"
+                variant="link"
+                onClick={() => setShowForgotPassword(true)}
+              >
+              Forgot Password?
+              </Button>
+
+             </div>
+            <div className="text-center mt-3">
+              <p>Don't have an account?</p>
+              <Button variant="link" onClick={handleGoToRegister}>
+                Register here
+              </Button>
             </div>
-
-            {/* Display Error Message */}
-            {errorMessage && <p className="text-danger">{errorMessage}</p>}
-
-            <div className="text-center text-md-start mt-4 pt-2">
-              <MDBBtn className="mb-0 px-5" size="lg" type="submit">Login</MDBBtn>
-              <p className="small fw-bold mt-2 pt-1 mb-2">
-                Don't have an account?{' '}
-                <a href="#!" onClick={goToRegister} className="link-danger">Register</a>
-              </p>
-            </div>
-          </form>
-        </MDBCol>
-      </MDBRow>
-
-      <div className="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary">
-        <div className="text-white mb-3 mb-md-0">Copyright © 2020. All rights reserved.</div>
-        <div>
-          <MDBBtn tag='a' color='none' className='mx-3' style={{ color: 'white' }}>
-            <MDBIcon fab icon='facebook-f' size="md" />
-          </MDBBtn>
-          <MDBBtn tag='a' color='none' className='mx-3' style={{ color: 'white' }}>
-            <MDBIcon fab icon='twitter' size="md" />
-          </MDBBtn>
-          <MDBBtn tag='a' color='none' className='mx-3' style={{ color: 'white' }}>
-            <MDBIcon fab icon='google' size="md" />
-          </MDBBtn>
-          <MDBBtn tag='a' color='none' className='mx-3' style={{ color: 'white' }}>
-            <MDBIcon fab icon='linkedin-in' size="md" />
-          </MDBBtn>
-        </div>
+          </Form>
+           )}
       </div>
-    </MDBContainer>
+    </div>
   );
 }
 
