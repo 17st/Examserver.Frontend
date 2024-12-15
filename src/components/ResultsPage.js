@@ -8,19 +8,35 @@ const ResultsPage = () => {
   const resultsPerPage = 10;
 
   useEffect(() => {
-    // Fetch data from the API
     const fetchData = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const testId = params.get("testId");
+
+      if (!testId) {
+        console.error("Test ID is missing from the query parameters.");
+        return;
+      }
+
       try {
         const response = await axios.get(
-          "http://localhost:8808/api/test-results/showTestResult?testId=2"
+          `http://localhost:8808/api/test-results/showTestResult?testId=${testId}`
         );
-        setResults(response.data);
+        
+        const data = response.data;
+        if (Array.isArray(data)) {
+          setResults(data); // Only set results if data is an array
+        } else {
+          console.error("API returned invalid data:", data);
+          setResults([]); // Fallback to an empty array
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
+        setResults([]); // Fallback to an empty array
       }
     };
     fetchData();
   }, []);
+
 
   const totalPages = Math.ceil(results.length / resultsPerPage);
   const startIndex = (currentPage - 1) * resultsPerPage;

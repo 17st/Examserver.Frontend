@@ -34,6 +34,9 @@ const NavigationBar = () => {
                 <NavItem>
                     <NavLink tag={Link} to="#!">Contact</NavLink>
                 </NavItem>
+                <NavItem>
+                    <NavLink tag={Link} to="/profile">Profile</NavLink>
+                </NavItem>
             </Nav>
         </>
             )}
