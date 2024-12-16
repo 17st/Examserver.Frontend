@@ -27,8 +27,8 @@ const UploadResult = () => {
     const fetchTestInfo = async () => {
       try {
         const url = isLiveTest
-          ? "http://localhost:8808/api/tests/showLiveTest"
-          : "http://localhost:8808/api/tests/showPracticeTests";
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
         
         const res = await axios.get(url);
         setTestList(res.data);
@@ -74,6 +74,66 @@ const UploadResult = () => {
     }
   };
 
+  const handlePublishTest = async (testId, hideTestInfo) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8808/api/tests/hide-test-info`,
+        null,
+        {
+          params: {
+            testId: testId,
+            hideTestInfo: !hideTestInfo, // Toggle the value
+          },
+        }
+      );
+
+      if (res.data === "Update successful") {
+        //alert(hideTestInfo ? "Test unpublished successfully!" : "Test published successfully!");
+        // Refresh the test list to reflect the updated hideTestInfo value
+        const url = isLiveTest
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
+
+        const updatedTestList = await axios.get(url);
+        setTestList(updatedTestList.data);
+      } else {
+        alert("Failed to update the test.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating the test.");
+    }
+  };
+
+  const handlePublishResult = async (testId, resultPublish) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8808/api/tests/publish_result`,
+        null,
+        {
+          params: {
+            testId: testId,
+            resultPublish: !resultPublish, // Toggle the value
+          },
+        }
+      );
+
+      if (res.data === "Update successful") {
+        const url = isLiveTest
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
+
+        const updatedTestList = await axios.get(url);
+        setTestList(updatedTestList.data);
+      } else {
+        alert("Failed to update the result publication status.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error updating the result publication status.");
+    }
+  };
+
   return (
     <Fragment>
       <Container>
@@ -106,6 +166,21 @@ const UploadResult = () => {
                   onClick={() => handleUploadResults(test.testId, test.startTime)}
                 >
                   Upload Results
+                </Button>
+                  {/* Publish/Unpublish Test Button */}
+                <Button
+                  color={test.hideTestInfo ? "success" : "warning"}
+                  onClick={() => handlePublishTest(test.testId, test.hideTestInfo)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  {test.hideTestInfo ? "Publish Test" : "Unpublish Test"}
+                </Button>
+                <Button
+                  color={!test.resultPublish ? "success" : "warning"}
+                  onClick={() => handlePublishResult(test.testId, test.resultPublish)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  {test.resultPublish ? "Unpublish Result" : "Publish Result"}
                 </Button>
               </div>
             ))
