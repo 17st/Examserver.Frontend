@@ -1,66 +1,3 @@
-// import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import {
-//     Card,
-//     CardBody,
-//     CardTitle,
-//     CardSubtitle,
-//     CardText,
-//     CardFooter,
-//     Button,
-//     Container,
-// } from "reactstrap";
-
-
-// const Course = ({ Course }) => {
-//     // Keep track of the duplicate tab reference
-//     const navigate = useNavigate();
-//     const [duplicateTab, setDuplicateTab] = useState(null);
-//     const [testStarted, setTestStarted] = useState(false);
-
-//     const handleClick = () => {
-//         const testUrl = `/quiz/6713cdc9906355109d1eb4e0?fromDuplicateTab=true`;
-//         if (duplicateTab && !duplicateTab.closed) {
-//             // If duplicate tab is already open, focus on it
-//             duplicateTab.focus();
-//         } else {
-//             // Otherwise, open a new tab and store the reference
-//             const newTab = window.open(testUrl, "_blank");
-//             setDuplicateTab(newTab); // Store the reference to the new tab
-//             setTestStarted(true); // Mark the test as started
-//         }
-//     };
-
-//     const handleShowResult = () => {
-//         navigate("/results"); // Navigate to the ResultsPage
-//       };
-
-//     return (
-//         <Card className="text-center ">
-//             <CardBody>
-//                 <CardSubtitle style={{ fontWeight: 'bold' }}>{Course.title}</CardSubtitle>
-//                 <CardText>{Course.description}</CardText>
-//                 <Container className="text-center">
-//                     <Button
-//                         color={testStarted ? "primary" : "warning"} // Change color to blue when the test is started
-//                         className="m-3"
-//                         onClick={handleClick}
-//                     >
-//                         {testStarted ? "Resume-Test" : "Start-Test"} {/* Change text based on test started */}
-//                     </Button>
-//                     <Button color="info" className="m-3" onClick={handleShowResult}>
-//             Show Result
-//           </Button>
-//                 </Container>
-//                 {/* {showEmbeddedWebsite && <EmbeddedWebsite />} */}
-//             </CardBody>
-//         </Card>
-//     );
-// }
-
-// export default Course;
-
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -78,31 +15,60 @@ const Course = ({ test }) => {
   const [duplicateTab, setDuplicateTab] = useState(null);
   const [testStarted, setTestStarted] = useState(false);
 
+  // Function to extract testId dynamically from testLink
+  const extractTestId = (testLink) => {
+    try {
+      const url = new URL(testLink);
+      return url.pathname.split('/').pop(); // Extract the last segment of the path
+    } catch (error) {
+      console.error("Invalid test link provided:", testLink);
+      return null;
+    }
+  };
+
   const handleClick = (testLink) => {
+    const testId = extractTestId(testLink);
+
+    if (!testId) {
+      alert("Unable to start the test. Invalid test link.");
+      return;
+    }
+
     if (duplicateTab && !duplicateTab.closed) {
       // Focus on the already opened tab
       duplicateTab.focus();
     } else {
-      // Open the test in a new tab
-      const newTab = window.open(`/quiz/6713cdc9906355109d1eb4e0?fromDuplicateTab=true`, "_blank");
+      // Open the test in a new tab with the dynamic testId
+      const newTab = window.open(`/quiz/${testId}?fromDuplicateTab=true`, "_blank");
       setDuplicateTab(newTab);
       setTestStarted(true);
     }
   };
 
   const handleShowResult = () => {
-    navigate("/results"); // Navigate to the results page
+    if (test.hideTestInfo) {
+      alert("Result will be updated soon.");
+      return;
+    }
+    const testId = test.testId;
+    if (!testId) {
+      alert("Unable to fetch results. Invalid test link.");
+      return;
+    }
+    navigate(`/results?testId=${testId}`); // Navigate to the results page with the testId
   };
 
   return (
     <Card className="text-center shadow">
       <CardBody>
-        {/* <CardTitle tag="h5">{test.testName}</CardTitle>
-        <CardSubtitle className="mb-2 text-muted">
-          Start Time: {new Date(test.startTime).toLocaleString()}
-        </CardSubtitle> */}
+        <CardTitle tag="h5">{test.testName || "Test Name Not Available"}</CardTitle>
+        {test.startTime && (
+          <CardSubtitle className="mb-2 text-muted">
+            Start Time: {new Date(test.startTime).toLocaleString()}
+          </CardSubtitle>
+        )}
         <CardText>
-          Provided by: <strong>{test.providerName}</strong>
+          Provided by: <strong>{test.providerName || "Unknown Provider"}</strong>
         </CardText>
         <Container>
           <Button
@@ -122,3 +88,4 @@ const Course = ({ test }) => {
 };
 
 export default Course;
+
