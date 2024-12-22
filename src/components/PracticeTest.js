@@ -148,7 +148,7 @@ const LiveContests = () => {
   useEffect(() => {
     document.title = "All Tests";
     axios
-      .get("http://localhost:8808/api/tests/showPracticeTest") // Replace with your backend URL
+      .get("https://metriseprep.onrender.com/api/tests/showPracticeTest") // Replace with your backend URL
       .then((response) => {
         setTests(response.data);
         setLoading(false);

@@ -11,7 +11,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:8808/api/users/get-user?userId=${userId}`);
+        const response = await axios.get(`https://metriseprep.onrender.com/api/users/get-user?userId=${userId}`);
         setUser(response.data);
       } catch (err) {
         setError('Error fetching user details');

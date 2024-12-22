@@ -19,7 +19,7 @@ const ResultsPage = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:8808/api/test-results/showTestResult?testId=${testId}`
+          `https://metriseprep.onrender.com/api/test-results/showTestResult?testId=${testId}`
         );
         
         const data = response.data;
