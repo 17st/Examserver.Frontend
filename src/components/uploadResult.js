@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
 import './uploadResult.css';  // Importing the CSS file
+import { useNavigate } from "react-router-dom";
 
 const UploadResult = () => {
   const [testInfo, setTestInfo] = useState({
@@ -22,6 +23,7 @@ const UploadResult = () => {
   const [testId, setTestId] = useState("");
   const [testStartTime, setTestStartTime] = useState("");
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTestInfo = async () => {
@@ -68,6 +70,12 @@ const UploadResult = () => {
         },
       });
       alert("Results uploaded successfully!");
+      const url = isLiveTest
+      ? "http://localhost:8808/api/tests/showAllLiveTest"
+      : "http://localhost:8808/api/tests/showAllPracticeTest";
+
+    const updatedTestList = await axios.get(url);
+    setTestList(updatedTestList.data);
     } catch (err) {
       console.error(err);
       alert("Error uploading results.");
@@ -105,7 +113,7 @@ const UploadResult = () => {
     }
   };
 
-  const handlePublishResult = async (testId, resultPublish) => {
+const handlePublishResult = async (testId, resultPublish) => {
     try {
       const res = await axios.put(
         `http://localhost:8808/api/tests/publish_result`,
@@ -132,6 +140,14 @@ const UploadResult = () => {
       console.error(err);
       alert("Error updating the result publication status.");
     }
+  };
+
+  const handleShowResult = (testId, hideTestInfo) => {
+    if (hideTestInfo) {
+      alert("Result will be updated soon.");
+      return;
+    }
+    navigate(`/results?testId=${testId}`); // Navigate to the results page with the testId
   };
 
   return (
@@ -162,10 +178,10 @@ const UploadResult = () => {
                   <Input type="file" onChange={handleFileChange} />
                 </FormGroup>
                 <Button
-                  color="primary"
-                  onClick={() => handleUploadResults(test.testId, test.startTime)}
-                >
-                  Upload Results
+                color={test.resultFileUploaded ? "primary" : "success"}
+                onClick={() => handleUploadResults(test.testId, test.startTime)}
+              >
+                {test.resultFileUploaded ? "Update Results" : "Upload Results"}
                 </Button>
                   {/* Publish/Unpublish Test Button */}
                 <Button
@@ -176,11 +192,18 @@ const UploadResult = () => {
                   {test.hideTestInfo ? "Publish Test" : "Unpublish Test"}
                 </Button>
                 <Button
-                  color={!test.resultPublish ? "success" : "warning"}
+                  color={test.resultPublish ? "success" : "warning"}
                   onClick={() => handlePublishResult(test.testId, test.resultPublish)}
                   style={{ marginLeft: "10px" }}
                 >
                   {test.resultPublish ? "Unpublish Result" : "Publish Result"}
+                </Button>
+                <Button
+                  color="info"
+                  onClick={() => handleShowResult(test.testId, test.hideTestInfo)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Show Results
                 </Button>
               </div>
             ))
