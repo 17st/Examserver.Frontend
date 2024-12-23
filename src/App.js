@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import { ToastContainer, toast } from "react-toastify";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom"; // Import useLocation from react-router-dom
+import { HashRouter as Router, Route, Routes } from "react-router-dom"; // Import useLocation from react-router-dom
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "./components/Home";
 import Allcourses from "./components/LiveContest";
