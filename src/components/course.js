@@ -39,7 +39,7 @@ const Course = ({ test }) => {
       duplicateTab.focus();
     } else {
       // Open the test in a new tab with the dynamic testId
-      const newTab = window.open(`/quiz/${testId}?fromDuplicateTab=true`, "_blank");
+      const newTab = window.open(`#quiz/${testId}?fromDuplicateTab=true`, "_blank");
       setDuplicateTab(newTab);
       setTestStarted(true);
     }
