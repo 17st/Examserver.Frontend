@@ -29,8 +29,8 @@ const UploadResult = () => {
     const fetchTestInfo = async () => {
       try {
         const url = isLiveTest
-          ? "https://metriseprep.onrender.com/api/tests/showAllLiveTest"
-          : "https://metriseprep.onrender.com/api/tests/showAllPracticeTest";
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
         
         const res = await axios.get(url);
         setTestList(res.data);
@@ -64,15 +64,15 @@ const UploadResult = () => {
     formData.append("startTime", testStartTime);
 
     try {
-      await axios.post("https://metriseprep.onrender.com/api/test-results/upload", formData, {
+      await axios.post("http://localhost:8808/api/test-results/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       alert("Results uploaded successfully!");
       const url = isLiveTest
-      ? "https://metriseprep.onrender.com/api/tests/showAllLiveTest"
-      : "https://metriseprep.onrender.com/api/tests/showAllPracticeTest";
+      ? "http://localhost:8808/api/tests/showAllLiveTest"
+      : "http://localhost:8808/api/tests/showAllPracticeTest";
 
     const updatedTestList = await axios.get(url);
     setTestList(updatedTestList.data);
@@ -85,7 +85,7 @@ const UploadResult = () => {
   const handlePublishTest = async (testId, hideTestInfo) => {
     try {
       const res = await axios.put(
-        `https://metriseprep.onrender.com/api/tests/hide-test-info`,
+        `http://localhost:8808/api/tests/hide-test-info`,
         null,
         {
           params: {
@@ -99,8 +99,8 @@ const UploadResult = () => {
         //alert(hideTestInfo ? "Test unpublished successfully!" : "Test published successfully!");
         // Refresh the test list to reflect the updated hideTestInfo value
         const url = isLiveTest
-          ? "https://metriseprep.onrender.com/api/tests/showAllLiveTest"
-          : "https://metriseprep.onrender.com/api/tests/showAllPracticeTest";
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
 
         const updatedTestList = await axios.get(url);
         setTestList(updatedTestList.data);
@@ -116,7 +116,7 @@ const UploadResult = () => {
 const handlePublishResult = async (testId, resultPublish) => {
     try {
       const res = await axios.put(
-        `https://metriseprep.onrender.com/api/tests/publish_result`,
+        `http://localhost:8808/api/tests/publish_result`,
         null,
         {
           params: {
@@ -128,8 +128,8 @@ const handlePublishResult = async (testId, resultPublish) => {
 
       if (res.data === "Update successful") {
         const url = isLiveTest
-          ? "https://metriseprep.onrender.com/api/tests/showAllLiveTest"
-          : "https://metriseprep.onrender.com/api/tests/showAllPracticeTest";
+          ? "http://localhost:8808/api/tests/showAllLiveTest"
+          : "http://localhost:8808/api/tests/showAllPracticeTest";
 
         const updatedTestList = await axios.get(url);
         setTestList(updatedTestList.data);

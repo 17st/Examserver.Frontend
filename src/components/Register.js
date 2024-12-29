@@ -63,7 +63,7 @@ function Register() {
 
     try {
       // Send POST request to Spring Boot backend for registration
-      const response = await axios.post('https://metriseprep.onrender.com/api/users/create', formData);
+      const response = await axios.post('http://localhost:8808/api/users/create', formData);
       console.log('Registration successful:', response.data);
   
       // Redirect to login page after successful registration
@@ -100,7 +100,7 @@ function Register() {
       console.log('Google Token:', googleToken); // Log just the token if needed
 
       // Send the token to your backend for validation
-      const result = await axios.post('https://metriseprep.onrender.com/api/users/create', { token: googleToken });
+      const result = await axios.post('http://localhost:8808/api/users/create', { token: googleToken });
 
       console.log('Google login successful:', result.data);
       // Redirect user to login or dashboard after successful Google login

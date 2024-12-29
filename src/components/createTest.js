@@ -76,7 +76,7 @@ const CreateTest = () => {
         };
 
     try {
-      const res = await axios.post("https://metriseprep.onrender.com/api/tests/create", testPayload);
+      const res = await axios.post("http://localhost:8808/api/tests/create", testPayload);
       setResponse(res.data);
       setError(null);
     } catch (err) {
@@ -92,7 +92,7 @@ const CreateTest = () => {
     formData.append("testId", testId);
 
     try {
-      const res = await axios.post("https://metriseprep.onrender.com/api/tests/upload-results", formData, {
+      const res = await axios.post("http://localhost:8808/api/tests/upload-results", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

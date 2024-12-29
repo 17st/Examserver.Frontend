@@ -6,7 +6,7 @@ import axios from 'axios';
 import ForgotPassword from './ForgotPassword'; 
 
 function Login() {
-  const [userNameOrEmail, setuserNameOrEmail] = useState('');
+  const [userEmail, setuserEmail] = useState('');
   const [userPass, setuserPass] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -23,17 +23,18 @@ function Login() {
   const validateForm = () => {
     const newErrors = {};
   
-    // Validate userNameOrEmail (email or username)
-    if (!userNameOrEmail) {
-      newErrors.userNameOrEmail = 'Email or Username is required';
+    // Validate userEmail (email or username)
+    if (!userEmail) {
+      newErrors.userEmail = 'Email or Username is required';
     }
   
     // Validate password in one line
     if (!userPass) {
       newErrors.userPass = 'Password is required';
-    } else if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(userPass)) {
-      newErrors.userPass = "We couldn't find an account with that password.";
-    }
+    } 
+    // else if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(userPass)) {
+    //   newErrors.userPass = "We couldn't find an account with that password.";
+    // }
   
     return newErrors;
   };
@@ -52,13 +53,13 @@ function Login() {
     } else {
       setErrors({});
       setLoading(true);
-      console.log('Login attempted with:', { userNameOrEmail, userPass });
+      console.log('Login attempted with:', { userEmail, userPass });
 
       // Send login request to Spring Boot API
       try {
-        const response = await axios.get('https://metriseprep.onrender.com/api/users/login_user', {
+        const response = await axios.get('http://localhost:8808/api/auth/login_user', {
           params: {
-            userNameOrEmail,  // Send data as query parameters
+            userEmail,  // Send data as query parameters
             userPass,
           },
         });
@@ -67,6 +68,7 @@ function Login() {
         if (response.status === 200) {
           setLoginSuccess(true);
           setToken(response.data.token); // Store the token (could store in localStorage)
+          localStorage.setItem("token", token);
           alert('Login successful!');
 
           // Redirect to the home page (or dashboard) after successful login
@@ -99,17 +101,17 @@ function Login() {
         ) : (
           // Show Login form
           <Form onSubmit={handleSubmit} className="login-form">
-            <Form.Group className="mb-3" controlId="formBasicuserNameOrEmail">
+            <Form.Group className="mb-3" controlId="formBasicuserEmail">
               <Form.Label>UserName Or Email address</Form.Label>
               <Form.Control
-                type="userNameOrEmail"
+                type="userEmail"
                 placeholder="Enter UserName Or Email"
-                value={userNameOrEmail}
-                onChange={(e) => setuserNameOrEmail(e.target.value)}
-                isInvalid={!!errors.userNameOrEmail}
+                value={userEmail}
+                onChange={(e) => setuserEmail(e.target.value)}
+                isInvalid={!!errors.userEmail}
               />
                <Form.Control.Feedback type="invalid">
-              {errors.userNameOrEmail}
+              {errors.userEmail}
               </Form.Control.Feedback>
             </Form.Group>
 
