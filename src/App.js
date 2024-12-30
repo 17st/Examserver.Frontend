@@ -16,6 +16,8 @@ import Login from "./components/login";
 import Register from "./components/Register";
 import ProfilePage from "./components/ProfilePage";
 import "react-phone-number-input/style.css";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Logout from "./components/Logout";
 
 const clientId = "YOUR_GOOGLE_CLIENT_ID"; // Replace with your Google OAuth client ID
 
@@ -40,14 +42,15 @@ function App() {
           <ToastContainer />
 
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/Home" element={<Home />} />
             <Route path="/view-course" element={<Allcourses />} />
             <Route path="/live-contest" element={<LiveContest />} />
-            <Route path="/create-test" element={<CreateTest />} />
+            <Route path="/create-test" element={<ProtectedRoute> <CreateTest /> </ProtectedRoute>} />
             <Route path="/quiz/:quizId" element={<QuizPage />} />
             <Route path="/practice-test" element={<PracticeTest />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout/>} />
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Routes>

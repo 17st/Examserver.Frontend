@@ -17,7 +17,7 @@ const NavigationBar = () => {
             <NavbarBrand tag={Link} to="/">Exam Portal</NavbarBrand>
             <Nav className="ms-auto" navbar>
                 <NavItem>
-                    <NavLink tag={Link} to="/">Home</NavLink>
+                    <NavLink tag={Link} to="/Home">Home</NavLink>
                 </NavItem>
                 <NavItem>
                     <NavLink tag={Link} to="/create-test">Create Quiz</NavLink>
@@ -36,6 +36,12 @@ const NavigationBar = () => {
                 </NavItem>
                 <NavItem>
                     <NavLink tag={Link} to="/profile">Profile</NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink tag={Link} to="/login">login</NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink tag={Link} to="/logout">logout</NavLink>
                 </NavItem>
             </Nav>
         </>

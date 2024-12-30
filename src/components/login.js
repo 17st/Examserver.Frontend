@@ -65,11 +65,13 @@ function Login() {
         });
         console.log('Login response:', response);
 
-        if (response.status === 200) {
+        if (response.status === 200) {  
           setLoginSuccess(true);
-          setToken(response.data.token); // Store the token (could store in localStorage)
-          localStorage.setItem("token", token);
-          alert('Login successful!');
+          const token = response.data.token; // Get the token from the response
+          console.log("token :  " + token);
+          localStorage.setItem("token", token); // Store the token in localStorage
+          setToken(token); // Update the state (optional, not needed for localStorage)
+
 
           // Redirect to the home page (or dashboard) after successful login
           navigate('/Home');

@@ -10,14 +10,18 @@ const Home = () => {
     useEffect(() => {
         document.title = "Home";
         // Check if token exists in localStorage
-        const token = localStorage.getItem('userToken');
+        const token = localStorage.getItem('token');
+        console.log("token available --- " + token);
         if (!token) {
+        console.log("token In If cond.  " + token);
         navigate('/login'); // Redirect to login if no token
         }
 
         // Optionally fetch user data using the token
         const userInfo = JSON.parse(localStorage.getItem('userInfo')); // Or fetch from an API
+        console.log("userInfo" + userInfo);
         if (userInfo) {
+            alert(userInfo);
             setUser(userInfo); // Set user info to state
         }
      }, [navigate]);
