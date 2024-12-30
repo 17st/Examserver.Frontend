@@ -2,6 +2,8 @@ import React, { Fragment, useState, useEffect } from "react";
 import axios from "axios";
 import UploadResult from "./uploadResult"
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
+import api from "./api"
+import './createTest.css'
 
 const CreateTest = () => {
   const [testInfo, setTestInfo] = useState({
@@ -14,6 +16,8 @@ const CreateTest = () => {
     timeDuration: 0,
     userId: "",
     testTotalMarks: 0,
+    testCategory: "",
+    testFor : "",
   });
 
   const [isLiveTest, setIsLiveTest] = useState(false); // To toggle between Live Test and Practice Test
@@ -21,6 +25,7 @@ const CreateTest = () => {
   const [error, setError] = useState(null);
   const [csvFile, setCsvFile] = useState(null);
   const [testId, setTestId] = useState(""); // For uploading the result CSV
+  const [showUploadResult, setShowUploadResult] = useState(false); 
 
   useEffect(() => {
     // Set testType conditionally without causing re-render loop
@@ -58,11 +63,13 @@ const CreateTest = () => {
       ? {
           testName: testInfo.testName,
           testDesc: testInfo.testDesc,
-          testType: "RankBooster",
+          testType: testInfo.testType,
           startTime: testInfo.startTime,
           endTime: testInfo.endTime,
           testLink: testInfo.testLink,
           userId: testInfo.userId,
+          testFor: testInfo.testFor,
+          testCategory: testInfo.testCategory,
         }
       : {
           testName: testInfo.testName,
@@ -73,10 +80,13 @@ const CreateTest = () => {
           timeDuration: testInfo.timeDuration,
           testTotalMarks: testInfo.testTotalMarks,
           userId: testInfo.userId,
+          testFor: testInfo.testFor,
+          testCategory: testInfo.testCategory,
         };
 
     try {
-      const res = await axios.post("http://localhost:8808/api/tests/create", testPayload);
+      // const res = await axios.post("http://localhost:8808/api/tests/create", testPayload);
+      const res = await api.post("/tests/create", testPayload);
       setResponse(res.data);
       setError(null);
     } catch (err) {
@@ -85,24 +95,8 @@ const CreateTest = () => {
     }
   };
 
-  const handleUploadResults = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("file", csvFile);
-    formData.append("testId", testId);
-
-    try {
-      const res = await axios.post("http://localhost:8808/api/tests/upload-results", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log(res.data);
-      alert("Results uploaded successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Error uploading results.");
-    }
+  const handleUploadButtonClick = () => {
+    setShowUploadResult(true); // Show the UploadResult component when button is clicked
   };
 
   return (
@@ -154,6 +148,33 @@ const CreateTest = () => {
               name="userId"
               placeholder="User ID"
               value={testInfo.userId}
+              onChange={handleChange}
+              required
+            />
+          </FormGroup>
+
+          {isLiveTest && (
+          <FormGroup>
+            <Label for="testType">Select Live Test Type:</Label>
+            <select
+              name="testType"
+              onChange={handleChange}
+              value={testInfo.testType} // Controlled value for liveTestType
+            >
+              <option value="">Select Test Type</option>
+              <option value="RankBooster">RankBooster</option>
+              <option value="NormalLive">Normal Live</option>
+            </select>
+          </FormGroup>
+        )}
+
+          <FormGroup>
+            <Label for="testFor">Test Related</Label>
+            <Input
+              type="text"
+              name="testFor"
+              placeholder="Test For"
+              value={testInfo.testFor}
               onChange={handleChange}
               required
             />
@@ -241,28 +262,32 @@ const CreateTest = () => {
         )}
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        {/* Upload Test Results */}
-        <h2 className="my-4">Upload Test Results</h2>
-        <UploadResult/>
-        {/* <form onSubmit={handleUploadResults}>
-          <FormGroup>
-            <Label for="testId">Enter Test ID</Label>
-            <Input
-              type="text"
-              name="testId"
-              value={testId}
-              onChange={(e) => setTestId(e.target.value)}
-              required
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="csvFile">Upload CSV File</Label>
-            <Input type="file" name="csvFile" onChange={handleFileChange} required />
-          </FormGroup>
-          <Button type="submit" color="secondary">
-            Upload Results
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
+          <Button
+            color="primary"
+            onClick={handleUploadButtonClick}
+            style={{
+              fontWeight: "bold",
+              fontSize: "16px",
+              padding: "12px 24px",
+              borderRadius: "10px",
+              backgroundColor: "#4f4f4f", // Light black or dark gray color
+              borderColor: "#2c2c2c", // Darker shade of black for the border
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
+              transition: "all 0.3s ease", // Smooth hover transition
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = "#2c2c2c"} // Hover effect (darker shade of black)
+            onMouseLeave={(e) => e.target.style.backgroundColor = "#4f4f4f"} // Revert hover effect
+          >
+            Upload Test Results
           </Button>
-        </form> */}
+        </div>
+
+
+
+
+        {/* Conditionally Render UploadResult */}
+        {showUploadResult && <UploadResult />}
       </Container>
     </Fragment>
   );
