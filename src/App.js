@@ -4,7 +4,6 @@ import { ToastContainer, toast } from "react-toastify";
 import { HashRouter as Router, Route, Routes } from "react-router-dom"; // Import useLocation from react-router-dom
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Home from "./components/Home";
-import Allcourses from "./components/LiveContest";
 import Header from "./components/Header";
 import LiveContest from "./components/LiveContest";
 import CreateTest from "./components/createTest";
@@ -43,16 +42,15 @@ function App() {
 
           <Routes>
             <Route path="/Home" element={<Home />} />
-            <Route path="/view-course" element={<Allcourses />} />
             <Route path="/live-contest" element={<LiveContest />} />
-            <Route path="/create-test" element={<ProtectedRoute> <CreateTest /> </ProtectedRoute>} />
-            <Route path="/quiz/:quizId" element={<QuizPage />} />
+            <Route path="/create-test" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
+            <Route path="/quiz/:quizId" element={<ProtectedRoute><QuizPage /></ProtectedRoute>} />
             <Route path="/practice-test" element={<PracticeTest />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/logout" element={<Logout/>} />
+            <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />
             <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           </Routes>
         </div>
       </Router>
