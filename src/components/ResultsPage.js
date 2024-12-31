@@ -1,25 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Container } from "reactstrap";
 import axios from "axios";
+import api from "./api";
+
 
 const ResultsPage = () => {
   const [results, setResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 10;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const testId = params.get("testId");
+  const getTestIdFromHash = () => {
+    const hash = window.location.hash;
+    const params = new URLSearchParams(hash.substring(hash.indexOf('?')));
+    return params.get("testId");
+  };
 
-      if (!testId) {
-        console.error("Test ID is missing from the query parameters.");
-        return;
-      }
+  useEffect(() => {
+    const testId = getTestIdFromHash();
+
+    if (!testId) {
+      console.error("Test ID is missing from the query parameters.");
+      return;
+    }
+
+    const fetchData = async () => {
+      // const params = new URLSearchParams(window.location.search);
+      // const testId = params.get("testId");
+
+      // if (!testId) {
+      //   console.error("Test ID is missing from the query parameters.");
+      //   return;
+      // }
 
       try {
-        const response = await axios.get(
-          `http://localhost:8808/api/test-results/showTestResult?testId=${testId}`
+        const response = await api.get(
+          `/test-results/showTestResult?testId=${testId}`
         );
         
         const data = response.data;
