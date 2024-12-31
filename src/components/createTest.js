@@ -1,122 +1,108 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState } from "react";
 import axios from "axios";
-import UploadResult from "./uploadResult"
+import UploadResult from "./uploadResult";
 import { Button, Container, Form, FormGroup, Input, Label } from "reactstrap";
-import api from "./api"
-import './createTest.css'
+import api from "./api";
+import "./createTest.css";
 
 const CreateTest = () => {
   const [testInfo, setTestInfo] = useState({
     testName: "",
     testLink: "",
-    testType: "Practice", // Initialize with "Practice" by default
+    testType: "Practice", // Default testType for practice-test
     testDesc: "",
     startTime: "",
     endTime: "",
     timeDuration: 0,
-    userId: "",
     testTotalMarks: 0,
-    testCategory: "",
-    testFor : "",
+    testFor: "",
   });
 
-  const [isLiveTest, setIsLiveTest] = useState(false); // To toggle between Live Test and Practice Test
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
-  const [csvFile, setCsvFile] = useState(null);
-  const [testId, setTestId] = useState(""); // For uploading the result CSV
-  const [showUploadResult, setShowUploadResult] = useState(false); 
+  const [loading, setLoading] = useState(false); // Loading state
+  const [showUploadResult, setShowUploadResult] = useState(false);
 
-  useEffect(() => {
-    // Set testType conditionally without causing re-render loop
-    const updatedTestType = isLiveTest ? "Live" : "Practice"; // Map isLiveTest to "Live" or "Practice"
-    setTestInfo((prev) => ({
-      ...prev,
-      testType: updatedTestType,
-    }));
-  }, [isLiveTest]); // Trigger only when `isLiveTest` changes
+  // Separate constants for test types
+  const practiceTestTypes = [
+    { value: "Practice", label: "Practice Test" },
+  ];
+
+  const liveTestTypes = [
+    { value: "Rankbooster", label: "Rankbooster" },
+    { value: "NormalLive", label: "NormalLive" },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setTestInfo({
-      ...testInfo,
+    setTestInfo((prev) => ({
+      ...prev,
       [name]: value,
-    });
-  };
-
-  const handleFileChange = (e) => {
-    setCsvFile(e.target.files[0]);
-  };
-
-  const handleTestTypeChange = (e) => {
-    const selectedType = e.target.value;
-    setIsLiveTest(selectedType === "Live");
-    setTestInfo({
-      ...testInfo,
-      testType: selectedType, // Directly update testType based on the selected option
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const testPayload = isLiveTest
-      ? {
-          testName: testInfo.testName,
-          testDesc: testInfo.testDesc,
-          testType: testInfo.testType,
-          startTime: testInfo.startTime,
-          endTime: testInfo.endTime,
-          testLink: testInfo.testLink,
-          userId: testInfo.userId,
-          testFor: testInfo.testFor,
-          testCategory: testInfo.testCategory,
-        }
-      : {
-          testName: testInfo.testName,
-          testDesc: testInfo.testDesc,
-          testType: testInfo.testType,
-          startTime: testInfo.startTime,
-          testLink: testInfo.testLink,
-          timeDuration: testInfo.timeDuration,
-          testTotalMarks: testInfo.testTotalMarks,
-          userId: testInfo.userId,
-          testFor: testInfo.testFor,
-          testCategory: testInfo.testCategory,
-        };
+    setLoading(true); // Set loading to true during API call
 
     try {
-      // const res = await axios.post("http://localhost:8808/api/tests/create", testPayload);
-      const res = await api.post("/tests/create", testPayload);
-      setResponse(res.data);
-      setError(null);
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("User is not authenticated");
+      }
+
+      const res = await api.post("/tests/create", testInfo, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setResponse("Test Created Successfully");
+      console.log(res.data);
     } catch (err) {
       console.error(err);
       setError("Error creating test");
+    } finally {
+      setLoading(false); // Set loading to false after API call completes
     }
   };
 
   const handleUploadButtonClick = () => {
-    setShowUploadResult(true); // Show the UploadResult component when button is clicked
+    setShowUploadResult(true);
   };
 
   return (
     <Fragment>
       <h1 className="text-center my-3">Create Test</h1>
       <Container>
-        {/* Test Type Selection */}
-        <div className="form-group">
-          <Label for="testType">Select Test Type:</Label>
-          <select
-            name="testType"
-            onChange={handleTestTypeChange}
-            value={testInfo.testType} // Make sure the dropdown value is controlled by testInfo.testType
-          >
-            <option value="Practice">Practice Test</option>
-            <option value="Live">Live Test</option>
-          </select>
-        </div>
+        <Form onSubmit={handleSubmit}>
+          {/* Select Test Type */}
+          <FormGroup>
+            <Label for="testType">Select Test Type:</Label>
+            <Input
+              type="select"
+              name="testType"
+              value={testInfo.testType}
+              onChange={handleChange}
+              required
+            >
+              <optgroup label="Practice Test Types">
+                {practiceTestTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Live Test Types">
+                {liveTestTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </optgroup>
+            </Input>
+          </FormGroup>
 
-        <form onSubmit={handleSubmit}>
           <FormGroup>
             <Label for="testName">Test Name</Label>
             <Input
@@ -142,33 +128,6 @@ const CreateTest = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label for="userId">User ID</Label>
-            <Input
-              type="text"
-              name="userId"
-              placeholder="User ID"
-              value={testInfo.userId}
-              onChange={handleChange}
-              required
-            />
-          </FormGroup>
-
-          {isLiveTest && (
-          <FormGroup>
-            <Label for="testType">Select Live Test Type:</Label>
-            <select
-              name="testType"
-              onChange={handleChange}
-              value={testInfo.testType} // Controlled value for liveTestType
-            >
-              <option value="">Select Test Type</option>
-              <option value="RankBooster">RankBooster</option>
-              <option value="NormalLive">Normal Live</option>
-            </select>
-          </FormGroup>
-        )}
-
-          <FormGroup>
             <Label for="testFor">Test Related</Label>
             <Input
               type="text"
@@ -180,8 +139,8 @@ const CreateTest = () => {
             />
           </FormGroup>
 
-          {/* Conditional Fields based on Test Type */}
-          {testInfo.testType === "Live" ? (
+          {/* Conditional Fields Based on Test Type */}
+          {liveTestTypes.some((type) => type.value === testInfo.testType) ? (
             <>
               <FormGroup>
                 <Label for="startTime">Test Start Time</Label>
@@ -249,44 +208,20 @@ const CreateTest = () => {
             </>
           )}
 
-          <Button type="submit" color="primary">
-            Create Test
+          <Button type="submit" color="primary" disabled={loading}>
+            {loading ? "Creating..." : "Create Test"}
           </Button>
-        </form>
+        </Form>
 
-        {/* Display Response */}
-        {response && (
-          <div>
-            <h2>Test Created Successfully:</h2>
-          </div>
-        )}
+        {response && <p style={{ color: "green" }}>{response}</p>}
         {error && <p style={{ color: "red" }}>{error}</p>}
 
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginTop: "20px" }}>
-          <Button
-            color="primary"
-            onClick={handleUploadButtonClick}
-            style={{
-              fontWeight: "bold",
-              fontSize: "16px",
-              padding: "12px 24px",
-              borderRadius: "10px",
-              backgroundColor: "#4f4f4f", // Light black or dark gray color
-              borderColor: "#2c2c2c", // Darker shade of black for the border
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Soft shadow for depth
-              transition: "all 0.3s ease", // Smooth hover transition
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = "#2c2c2c"} // Hover effect (darker shade of black)
-            onMouseLeave={(e) => e.target.style.backgroundColor = "#4f4f4f"} // Revert hover effect
-          >
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <Button color="primary" onClick={handleUploadButtonClick}>
             Upload Test Results
           </Button>
         </div>
 
-
-
-
-        {/* Conditionally Render UploadResult */}
         {showUploadResult && <UploadResult />}
       </Container>
     </Fragment>

@@ -10,11 +10,11 @@ import PhoneInput from 'react-phone-number-input'; // Import react-phone-number-
 function Register() {
   const [formData, setFormData] = useState({
     userName: '',
-    userId: '',
     userDOB: '',
     userCity: '',
     userSchoolOrCollege: '',
     userMob: '',
+    userType: 'CollegeStudent',
     userMailId: '',
     userPassword: '',
     confirmuserPassword: '', // Add a confirm userPassword field
@@ -76,7 +76,7 @@ function Register() {
         const { message } = error.response.data; // Assuming backend sends a message like 'User with userId sbl3031 already exists'
         alert(message); // Display the message sent by the backend
       } else {
-        alert(`User with userId ${formData.userId} already exists.`);
+        alert(`User with userId  already exists.`);
       }
     }
   };
@@ -100,7 +100,7 @@ function Register() {
       console.log('Google Token:', googleToken); // Log just the token if needed
 
       // Send the token to your backend for validation
-      const result = await axios.post('http://localhost:8808/api/users/create', { token: googleToken });
+      const result = await axios.post('http://localhost:8808/api/users/create', { token: googleToken },);
 
       console.log('Google login successful:', result.data);
       // Redirect user to login or dashboard after successful Google login
@@ -140,17 +140,6 @@ function Register() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-4" controlId="userId">
-              <Form.Label>userId</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter your full name"
-                name="userId"
-                value={formData.userId}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
 
             <Form.Group className="mb-4" controlId="userMailId">
               <Form.Label>Email Address</Form.Label>
@@ -164,7 +153,7 @@ function Register() {
               />
             </Form.Group>
 
-            <Form.Group className="mb-4" controlId="userDOB">
+            {/* <Form.Group className="mb-4" controlId="userDOB">
               <Form.Label>Date of Birth</Form.Label>
               <Form.Control
                 type="date"
@@ -172,7 +161,7 @@ function Register() {
                 value={formData.userDOB}
                 onChange={handleChange}
               />
-            </Form.Group>
+            </Form.Group> */}
 
             <Form.Group className="mb-4" controlId="userCity">
               <Form.Label>City</Form.Label>
@@ -195,6 +184,21 @@ function Register() {
                 onChange={handleChange}
                 required
               />
+            </Form.Group>
+
+            {/* User Type */}
+            <Form.Group className="mb-4" controlId="userType">
+              <Form.Label>User Type</Form.Label>
+              <Form.Control
+                as="select"
+                name="userType"
+                value={formData.userType}
+                onChange={handleChange}
+                required
+              >
+                <option value="SchoolStudent">School Student</option>
+                <option value="CollegeStudent">College Student</option>
+              </Form.Control>
             </Form.Group>
 
              {/* Country Code with Mobile Number */}
@@ -261,7 +265,7 @@ function Register() {
               </div>
             </Form.Group>
 
-            <Form.Group className="mb-4">
+            {/* <Form.Group className="mb-4">
               <div className="gender-details">
                 <Form.Label className="gender-title">Gender</Form.Label>
 
@@ -289,7 +293,7 @@ function Register() {
                   />
                 </div>
               </div>
-            </Form.Group>
+            </Form.Group> */}
 
             <div className="text-center text-md-start mt-4 pt-2">
               <Button variant="primary" size="lg" type="submit" className="mb-0 px-5">

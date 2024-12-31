@@ -161,7 +161,7 @@ const LiveContests = () => {
 
   return (
     <Container>
-      <h1 className="text-center my-4">Live Quizzes</h1>
+      <h1 className="text-center my-4">Practice Quizzes</h1>
       <p className="text-center">List of available tests:</p>
 
       {loading ? (
