@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
@@ -26,7 +26,24 @@ const Course = ({ test }) => {
     }
   };
 
+    // Check for a valid token
+    const checkToken = () => {
+      const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
+      if (!token) {
+        navigate("/login"); // Redirect to the login page if no token is found
+      }
+      return token;
+    };
+
+    // useEffect(() => {
+    //   // Validate token on component mount
+    //   checkToken();
+    // }, []);
+
   const handleClick = (testLink) => {
+    const token = checkToken(); // Ensure token is valid before proceeding
+    if (!token) return;
+
     const testId = extractTestId(testLink);
 
     if (!testId) {
@@ -46,6 +63,9 @@ const Course = ({ test }) => {
   };
 
   const handleShowResult = () => {
+    const token = checkToken(); // Ensure token is valid before proceeding
+    if (!token) return;
+
     if (test.hideTestInfo) {
       alert("Result will be updated soon.");
       return;
