@@ -30,8 +30,8 @@ const Home = () => {
         <div className="text-center">
         <h1>Welcome {user?.userName}</h1> {/* Display user's name */}
         <CardBody className=" p-5 bg-secondary text-white rounded" >
-            <CardTitle className="display-5">Learncodewith Durgesh</CardTitle>
-            <CardText>This is developed by Learncodewith Durgesh for learning purpose. Its backend is on spring boat and frontend on react.js.</CardText>
+            <CardTitle className="display-5">Let's Grow with Us</CardTitle>
+            <CardText>This is developed by VIKASH BANSAL for learning purpose. Its backend is on spring boat and frontend on react.js.</CardText>
             <Container>
                 <Button color="dark" outline> Go somewhere</Button>
             </Container>

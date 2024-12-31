@@ -41,6 +41,7 @@ function App() {
           <ToastContainer />
 
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/Home" element={<Home />} />
             <Route path="/live-contest" element={<LiveContest />} />
             <Route path="/create-test" element={<ProtectedRoute><CreateTest /></ProtectedRoute>} />
