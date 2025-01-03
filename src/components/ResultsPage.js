@@ -24,20 +24,13 @@ const ResultsPage = () => {
     }
 
     const fetchData = async () => {
-      // const params = new URLSearchParams(window.location.search);
-      // const testId = params.get("testId");
-
-      // if (!testId) {
-      //   console.error("Test ID is missing from the query parameters.");
-      //   return;
-      // }
-
       try {
         const response = await api.get(
           `/test-results/showTestResult?testId=${testId}`
         );
-        
-        const data = response.data;
+    console.log("Full response:", response);
+    console.log("Response data:", response.data);
+    const data = response.data;
         if (Array.isArray(data)) {
           setResults(data); // Only set results if data is an array
         } else {

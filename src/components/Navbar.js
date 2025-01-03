@@ -36,9 +36,6 @@ const NavigationBar = () => {
                             <NavItem>
                                 <NavLink tag={Link} to="#!">About</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink tag={Link} to="#!">Contact</NavLink>
-                            </NavItem>
                             {token && (
                                 <NavItem>
                                     <NavLink tag={Link} to="/profile">Profile</NavLink>

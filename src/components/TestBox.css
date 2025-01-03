@@ -1,5 +1,5 @@
-/* CSS for Course component */
-.course-card {
+/* CSS for TestBox component */
+.TestBox-card {
     border-radius: 12px;
     background-color: #ffffff;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -7,33 +7,33 @@
     padding: 20px;
   }
   
-  .course-title {
+  .TestBox-title {
     font-size: 1.6rem;
     font-weight: bold;
     color: #343a40;
     margin-bottom: 12px;
   }
   
-  .course-subtitle {
+  .TestBox-subtitle {
     font-size: 1rem;
     color: #6c757d;
     margin-bottom: 16px;
   }
   
-  .course-provider {
+  .TestBox-provider {
     font-size: 1rem;
     color: #495057;
     margin-bottom: 16px;
   }
   
-  .course-buttons {
+  .TestBox-buttons {
     display: flex;
     justify-content: center;
     gap: 12px;
     margin-top: 20px;
   }
   
-  .course-btn {
+  .TestBox-btn {
     font-size: 1rem;
     padding: 12px 24px;
     font-weight: 600;
@@ -41,11 +41,11 @@
     transition: all 0.3s ease;
   }
   
-  .course-btn:hover {
+  .TestBox-btn:hover {
     opacity: 0.8;
   }
   
-  .course-btn:focus {
+  .TestBox-btn:focus {
     outline: none;
   }
   

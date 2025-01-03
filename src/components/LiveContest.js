@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // To fetch data from the backend
-import Course from "./course";
+import TestBox from "./TestBox";
 import { Container, Row, Col } from "reactstrap";
 import api from "./api";
 
@@ -42,7 +42,7 @@ const LiveContests = () => {
     <Row>
       {testList.map((test) => (
         <Col key={test.testId} sm="12" md="6" lg="4" className="mb-4">
-          <Course test={test} />
+          <TestBox test={test} />
         </Col>
       ))}
     </Row>

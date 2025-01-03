@@ -137,7 +137,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios"; // To fetch data from the backend
-import Course from "./course";
+import Course from "./TestBox";
 import { Container, Row, Col } from "reactstrap";
 
 const LiveContests = () => {

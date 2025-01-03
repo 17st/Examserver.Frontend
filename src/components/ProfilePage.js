@@ -5,8 +5,13 @@ const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showRollNo, setShowRollNo] = useState(false);
 
   const indicatorStyle = { display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', marginRight: '5px' };
+
+  const toggleRollNoVisibility = () => {
+    setShowRollNo((prevState) => !prevState);
+  };
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -53,6 +58,27 @@ const ProfilePage = () => {
         <p><strong>User ID:</strong> {user.userId}</p>
         <p><strong>Name:</strong> {user.userName}</p>
         <p><strong>Email:</strong> {user.userMailId}</p>
+        <p>
+          <strong>Roll No:</strong>
+          {showRollNo ? (
+            <span> {user.userRollNo}</span>
+          ) : (
+            <span> *******</span>
+          )}
+          <button 
+            onClick={toggleRollNoVisibility} 
+            style={{
+              marginLeft: '10px',
+              cursor: 'pointer',
+              padding: '2px 8px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              backgroundColor: showRollNo ? '#ffdddd' : '#ddffdd', // Red for "Hide", Green for "Show"
+            }}
+          >
+            {showRollNo ? 'Hide' : 'Show'}
+          </button>
+        </p>       
         <p><strong>School/College:</strong> {user.userSchoolOrCollege}</p>
         <p><strong>Rating:</strong> {user.userRating}</p>
         <p><strong>Rank:</strong> {user.userRank}</p>
