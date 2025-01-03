@@ -22,11 +22,11 @@ const NavigationBar = () => {
                             <NavItem>
                                 <NavLink tag={Link} to="/Home">Home</NavLink>
                             </NavItem>
-                            {token && (
+                            {/* {token && (
                                 <NavItem>
                                     <NavLink tag={Link} to="/create-test">Create Quiz</NavLink>
                                 </NavItem>
-                            )}
+                            )} */}
                             <NavItem>
                                 <NavLink tag={Link} to="/practice-test">Practice Contest</NavLink>
                             </NavItem>

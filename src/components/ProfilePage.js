@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import api from "./api";
+import api from './api';
+import CreateTest from './createTest'; // Import the CreateTest component
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -65,8 +66,8 @@ const ProfilePage = () => {
           ) : (
             <span> *******</span>
           )}
-          <button 
-            onClick={toggleRollNoVisibility} 
+          <button
+            onClick={toggleRollNoVisibility}
             style={{
               marginLeft: '10px',
               cursor: 'pointer',
@@ -78,14 +79,27 @@ const ProfilePage = () => {
           >
             {showRollNo ? 'Hide' : 'Show'}
           </button>
-        </p>       
+        </p>
         <p><strong>School/College:</strong> {user.userSchoolOrCollege}</p>
         <p><strong>Rating:</strong> {user.userRating}</p>
         <p><strong>Rank:</strong> {user.userRank}</p>
         <p><strong>Mob:</strong> {user.userMob}</p>
         <p><strong>City:</strong> {user.userCity}</p>
-      <p><strong>Status:</strong> <span style={{ ...indicatorStyle, backgroundColor: user.active ? 'green' : 'red' }}></span> {user.active ? 'Active' : 'Blocked'}</p>
+        <p>
+          <strong>Status:</strong>
+          <span style={{ ...indicatorStyle, backgroundColor: user.active ? 'green' : 'red' }}></span>
+          {user.active ? 'Active' : 'Blocked'}
+        </p>
       </div>
+
+      {/* Conditional Dashboard for ADMIN */}
+      {user.userType === 'ADMIN' && (
+        <div style={{ marginTop: '40px', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
+          <h3 style={{ textAlign: 'center' }}>Admin Dashboard</h3>
+          {/* Render the CreateTest component only for Admins */}
+          <CreateTest />
+        </div>
+      )}
     </div>
   );
 };
