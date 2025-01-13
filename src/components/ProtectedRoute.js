@@ -1,17 +1,19 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     if (!token) {
-      navigate("/login"); // Navigate only if the token is missing
+      // Save the current path the user is trying to access
+      localStorage.setItem("redirectPath", location.pathname);
+      navigate("/login"); // Navigate to login
     }
-  }, [token, navigate]);
+  }, [token, navigate, location]);
 
-  // Render the children only if the token exists
   return token ? children : null;
 };
 

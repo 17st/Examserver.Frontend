@@ -1,49 +1,25 @@
 import React, { useState } from 'react';
-import { Form, Button, Container, Row, Col } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; 
+import { Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import './login.css';
 import axios from 'axios';
-import ForgotPassword from './ForgotPassword'; 
+import ForgotPassword from './ForgotPassword';
 
 function Login() {
   const [userEmail, setuserEmail] = useState('');
   const [userPass, setuserPass] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [loginSuccess, setLoginSuccess] = useState(null);
-  const [token, setToken] = useState(null);
-
-
-
-  // State to handle the Forgot Password form view
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  const navigate = useNavigate(); // Initialize the navigate function for routing
+  const navigate = useNavigate();
 
   const validateForm = () => {
     const newErrors = {};
-  
-    // Validate userEmail (email or username)
-    if (!userEmail) {
-      newErrors.userEmail = 'Email or Username is required';
-    }
-  
-    // Validate password in one line
-    if (!userPass) {
-      newErrors.userPass = 'Password is required';
-    } 
-    // else if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/.test(userPass)) {
-    //   newErrors.userPass = "We couldn't find an account with that password.";
-    // }
-  
+    if (!userEmail) newErrors.userEmail = 'Email or Username is required';
+    if (!userPass) newErrors.userPass = 'Password is required';
     return newErrors;
   };
-  
-  const handleuserPass = () => {};
-
-  function delay(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -53,36 +29,29 @@ function Login() {
     } else {
       setErrors({});
       setLoading(true);
-      console.log('Login attempted with:', { userEmail, userPass });
 
-      // Send login request to Spring Boot API
       try {
         const response = await axios.get('http://localhost:8808/api/auth/login_user', {
           params: {
-            userEmail,  // Send data as query parameters
+            userEmail,
             userPass,
           },
         });
-        console.log('Login response:', response);
 
-        if (response.status === 200) {  
-          setLoginSuccess(true);
-          const token = response.data.token; // Get the token from the response
-          console.log("token :  " + token);
-          localStorage.setItem("token", token); // Store the token in localStorage
-          setToken(token); // Update the state (optional, not needed for localStorage)
+        if (response.status === 200) {
+          const token = response.data.token;
+          localStorage.setItem("token", token);
 
-
-          // Redirect to the home page (or dashboard) after successful login
-          navigate('/Home');
+          // Get the redirect path or default to '/'
+          const redirectPath = localStorage.getItem("redirectPath") || '/';
+          localStorage.removeItem("redirectPath"); // Clear the redirect path
+          navigate(redirectPath); // Redirect to the desired page
         }
       } catch (error) {
         console.error('Login failed:', error);
-        if (error.message === 'Network Error') {
-          setErrors({ general: 'Network error, please check if the backend is running' });
-        } else {
-          setErrors({ general: error.response?.data?.message || 'Login failed' });
-        }
+        setErrors({
+          general: error.response?.data?.message || 'Login failed. Please try again.',
+        });
       } finally {
         setLoading(false);
       }
@@ -90,62 +59,61 @@ function Login() {
   };
 
   const handleGoToRegister = () => {
-    navigate('/register'); // Redirect to register page if the user doesn't have an account
+    navigate('/register');
   };
 
   return (
     <div className="login-wrapper">
       <div className="login-form-container">
-       <h2 className="login-title">{showForgotPassword ? 'Forgot Password' : 'Login'}</h2>
-       {showForgotPassword ? (
-          // Show ForgotPassword component
+        <h2 className="login-title">{showForgotPassword ? 'Forgot Password' : 'Login'}</h2>
+        {showForgotPassword ? (
           <ForgotPassword onBackToLogin={() => setShowForgotPassword(false)} />
         ) : (
-          // Show Login form
           <Form onSubmit={handleSubmit} className="login-form">
             <Form.Group className="mb-3" controlId="formBasicuserEmail">
-              <Form.Label>UserName Or Email address</Form.Label>
+              <Form.Label>Username or Email</Form.Label>
               <Form.Control
-                type="userEmail"
-                placeholder="Enter UserName Or Email"
+                type="text"
+                placeholder="Enter Username or Email"
                 value={userEmail}
                 onChange={(e) => setuserEmail(e.target.value)}
                 isInvalid={!!errors.userEmail}
               />
-               <Form.Control.Feedback type="invalid">
-              {errors.userEmail}
-              </Form.Control.Feedback>
+              <Form.Control.Feedback type="invalid">{errors.userEmail}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="formBasicuserPass">
               <Form.Label>Password</Form.Label>
               <Form.Control
-                type="userPass"
+                type="password"
                 placeholder="Password"
                 value={userPass}
                 onChange={(e) => setuserPass(e.target.value)}
                 isInvalid={!!errors.userPass}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.userPass}
-                </Form.Control.Feedback>
+              />
+              <Form.Control.Feedback type="invalid">{errors.userPass}</Form.Control.Feedback>
             </Form.Group>
+
             <Form.Group className="mb-2" controlId="checkbox">
               <Form.Check type="checkbox" label="Remember me" />
             </Form.Group>
-            <Button variant="primary" type="submit" className="login-button">
-              Login
+
+            <Button variant="primary" type="submit" className="login-button" disabled={loading}>
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
-            <div className="d-grid justify-content-end">
+
+            {errors.general && <p className="text-danger mt-3">{errors.general}</p>}
+
+            <div className="d-grid justify-content-end mt-2">
               <Button
                 className="text-muted px-0"
                 variant="link"
                 onClick={() => setShowForgotPassword(true)}
               >
-              Forgot Password?
+                Forgot Password?
               </Button>
+            </div>
 
-             </div>
             <div className="text-center mt-3">
               <p>Don't have an account?</p>
               <Button variant="link" onClick={handleGoToRegister}>
@@ -153,11 +121,10 @@ function Login() {
               </Button>
             </div>
           </Form>
-           )}
+        )}
       </div>
     </div>
   );
 }
 
 export default Login;
-
