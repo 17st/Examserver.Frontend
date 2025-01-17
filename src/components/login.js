@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import axios from 'axios';
 import ForgotPassword from './ForgotPassword';
+import GoogleLoginComponent from './GoogleLoginComponent';
 
 function Login() {
   const [userEmail, setuserEmail] = useState('');
@@ -40,11 +41,11 @@ function Login() {
 
         if (response.status === 200) {
           const token = response.data.token;
-          localStorage.setItem("token", token);
+          localStorage.setItem('token', token);
 
           // Get the redirect path or default to '/'
-          const redirectPath = localStorage.getItem("redirectPath") || '/';
-          localStorage.removeItem("redirectPath"); // Clear the redirect path
+          const redirectPath = localStorage.getItem('redirectPath') || '/';
+          localStorage.removeItem('redirectPath'); // Clear the redirect path
           navigate(redirectPath); // Redirect to the desired page
         }
       } catch (error) {
@@ -56,6 +57,35 @@ function Login() {
         setLoading(false);
       }
     }
+  };
+
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      const { credential } = credentialResponse;
+      console.log(credential);
+      const response = await axios.get('http://localhost:8808/api/auth/google_login', {
+        params: {
+          token: credential,
+         },
+      });
+
+      if (response.status === 200) {
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Google login failed:', error);
+      setErrors({
+        general: 'Google login failed. Please try again.',
+      });
+    }
+  };
+
+  const handleGoogleLoginFailure = () => {
+    setErrors({
+      general: 'Google login failed. Please try again.',
+    });
   };
 
   const handleGoToRegister = () => {
@@ -119,6 +149,14 @@ function Login() {
               <Button variant="link" onClick={handleGoToRegister}>
                 Register here
               </Button>
+            </div>
+
+            <div className="text-center mt-3">
+              <p>Or log in using:</p>
+              <GoogleLoginComponent
+                onSuccess={handleGoogleLoginSuccess}
+                onFailure={handleGoogleLoginFailure}
+              />
             </div>
           </Form>
         )}
