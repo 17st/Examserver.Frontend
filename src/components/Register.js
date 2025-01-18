@@ -19,6 +19,14 @@ const colleges = [
   "Indian Institute of Science, Bangalore",
   "NIT Trichy",
   "NIT Surathkal",
+  "Jabalpur Engineering College",
+  "LNCT Group of Colleges",
+  "SGSITS",
+  "IET DAVV",
+  "Atal Bihari Vajpayee Indian Institute of Information Technology and Management.",
+  "Indian Institute of Information Technology, Design and Manufacturing, Jabalpur",
+  "Dr. Hari Singh Gour University",
+  "Maulana Azad National Institute of Technology Bhopal"
 ];
 
 function Register() {
