@@ -1,32 +1,46 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; // To navigate to other pages
-import axios from 'axios'; // To make HTTP requests
-import { GoogleLogin } from '@react-oauth/google'; // Google Login import
-import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import FaEye and FaEyeSlash
-import './register.css'; // Include your CSS
-import PhoneInput from 'react-phone-number-input'; // Import react-phone-number-input
+import React, { useState } from "react";
+import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { GoogleLogin } from "@react-oauth/google";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css"; // PhoneInput styles
+import "./register.css"; // Include your CSS
+
+const colleges = [
+  "Indian Institute of Technology, Bombay",
+  "Indian Institute of Technology, Delhi",
+  "Indian Institute of Technology, Madras",
+  "Indian Institute of Technology, Kanpur",
+  "Birla Institute of Technology and Science, Pilani",
+  "Delhi University, Delhi",
+  "Banaras Hindu University, Varanasi",
+  "Indian Institute of Science, Bangalore",
+  "NIT Trichy",
+  "NIT Surathkal",
+];
 
 function Register() {
   const [formData, setFormData] = useState({
-    userName: '',
-    userDOB: '',
-    userCity: '',
-    userSchoolOrCollege: '',
-    userMob: '',
-    userType: 'CollegeStudent',
-    userMailId: '',
-    userPassword: '',
-    confirmuserPassword: '', // Add a confirm userPassword field
+    userName: "",
+    userCity: "",
+    userSchoolOrCollege: "",
+    userMob: "",
+    userType: "CollegeStudent",
+    userMailId: "",
+    userPassword: "",
+    confirmPassword: "",
   });
 
-    // State for userPassword visibility toggle
-    const [userPasswordVisible, setuserPasswordVisible] = useState(false);
-    const [confirmuserPasswordVisible, setConfirmuserPasswordVisible] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [customCollege, setCustomCollege] = useState("");
+  const [isCustomCollege, setIsCustomCollege] = useState(false);
 
-  const navigate = useNavigate(); // React Router hook to navigate
+  const navigate = useNavigate();
 
-  // Handle form input change
+  // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -35,99 +49,94 @@ function Register() {
     });
   };
 
-  // Handle form submission (Register)
+  // Handle college selection
+  const handleCollegeChange = (e) => {
+    if (e.target.value === "custom") {
+      setIsCustomCollege(true);
+      setFormData({ ...formData, userSchoolOrCollege: "" });
+    } else {
+      setIsCustomCollege(false);
+      setFormData({ ...formData, userSchoolOrCollege: e.target.value });
+    }
+  };
+
+  // Handle custom college input
+  const handleCustomCollegeChange = (e) => {
+    setCustomCollege(e.target.value);
+    setFormData({ ...formData, userSchoolOrCollege: e.target.value });
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate userPasswords
-    if (formData.userPassword !== formData.confirmuserPassword) {
+    // Validate passwords match
+    if (formData.userPassword !== formData.confirmPassword) {
       alert("Passwords don't match");
       return;
     }
 
-     // Validate password (at least 8 characters, one uppercase, one digit, one special character)
-     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-     if (!passwordRegex.test(formData.userPassword)) {
-       alert('Your Password must contain at least 8 characters, Upper-case letters(A-Z), Lower-case letters(a-z), Numbers(0-9) and Special characters(e.g. !@#$%^&*).');
-       return;
-     }
+    // Validate password strength
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
+    if (!passwordRegex.test(formData.userPassword)) {
+      alert(
+        "Password must be at least 8 characters long, including an uppercase letter, a digit, and a special character."
+      );
+      return;
+    }
 
-    // Validate mobile number format (basic validation)
+    // Validate mobile number format
     const phoneRegex = /^\+?[1-9]\d{1,14}$/;
     if (!phoneRegex.test(formData.userMob)) {
       alert("Please enter a valid mobile number.");
       return;
     }
 
-    console.log('Form Data:', formData); // Log the form data to the console
-
     try {
-      // Send POST request to Spring Boot backend for registration
-      const response = await axios.post('http://localhost:8808/api/users/create', formData);
-      console.log('Registration successful:', response.data);
-  
-      // Redirect to login page after successful registration
-      navigate('/login');
+      // Send registration data to backend
+      const response = await axios.post(
+        "http://localhost:8808/api/users/create",
+        formData
+      );
+      console.log("Registration successful:", response.data);
+
+      // Navigate to login page after successful registration
+      navigate("/login");
     } catch (error) {
-      console.error('Error during registration:', error);
-  
-      // Check if the error is due to duplicate user and extract field info
-      if (error.response && error.response.status === 409) { // 409 Conflict (User already exists)
-        const { message } = error.response.data; // Assuming backend sends a message like 'User with userId sbl3031 already exists'
-        alert(message); // Display the message sent by the backend
-      } else {
-        alert(`User with userId  already exists.`);
-      }
+      console.error("Error during registration:", error);
+      const message =
+        error.response?.status === 409
+          ? error.response.data.message
+          : "An error occurred. Please try again.";
+      alert(message);
     }
-  };
-
-   // Toggle userPassword visibility
-   const toggleuserPasswordVisibility = () => {
-    setuserPasswordVisible(!userPasswordVisible);
-  };
-
-  const toggleConfirmuserPasswordVisibility = () => {
-    setConfirmuserPasswordVisible(!confirmuserPasswordVisible);
   };
 
   // Handle Google login
   const handleGoogleLogin = async (response) => {
     try {
-      // Log the Google response to see the data
-      console.log('Google Login Response:', response); // Log the entire Google response object
-
-      const googleToken = response.credential; // The Google ID token
-      console.log('Google Token:', googleToken); // Log just the token if needed
-
-      // Send the token to your backend for validation
-      const result = await axios.post('http://localhost:8808/api/users/create', { token: googleToken },);
-
-      console.log('Google login successful:', result.data);
-      // Redirect user to login or dashboard after successful Google login
-      navigate('/dashboard'); // or '/login'
+      const googleToken = response.credential;
+      const result = await axios.post(
+        "http://localhost:8808/api/users/create",
+        { token: googleToken }
+      );
+      console.log("Google login successful:", result.data);
+      navigate("/dashboard");
     } catch (error) {
-      console.error('Google login error:', error);
-      alert('Google login failed. Please try again.');
+      console.error("Google login error:", error);
+      alert("Google login failed. Please try again.");
     }
   };
 
   return (
     <Container fluid className="p-3 my-5 h-custom">
       <Row>
-        {/* <Col xs={12} md={6}>
-          <img
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
-            className="img-fluid"
-            alt="Register"
-          />
-        </Col> */}
-
-        <Col xs={12} md={6} className='register-wrap'>
-        <div className="d-flex justify-content-center align-items-center mb-4">
-          <h2 className="fw-bold mb-0 mx-3">Registration Info</h2>
-        </div>
-          {/* Registration Form Inputs */}
-          <Form onSubmit={handleSubmit} className='register-form'>
+        <Col xs={12} md={6} className="register-wrap">
+          <div className="d-flex justify-content-center align-items-center mb-4">
+            <h2 className="fw-bold mb-0 mx-3">Registration Info</h2>
+          </div>
+          <Form onSubmit={handleSubmit} className="register-form">
+            {/* Full Name */}
             <Form.Group className="mb-4" controlId="userName">
               <Form.Label>Full Name</Form.Label>
               <Form.Control
@@ -140,7 +149,7 @@ function Register() {
               />
             </Form.Group>
 
-
+            {/* Email */}
             <Form.Group className="mb-4" controlId="userMailId">
               <Form.Label>Email Address</Form.Label>
               <Form.Control
@@ -153,16 +162,7 @@ function Register() {
               />
             </Form.Group>
 
-            {/* <Form.Group className="mb-4" controlId="userDOB">
-              <Form.Label>Date of Birth</Form.Label>
-              <Form.Control
-                type="date"
-                name="userDOB"
-                value={formData.userDOB}
-                onChange={handleChange}
-              />
-            </Form.Group> */}
-
+            {/* City */}
             <Form.Group className="mb-4" controlId="userCity">
               <Form.Label>City</Form.Label>
               <Form.Control
@@ -174,167 +174,132 @@ function Register() {
               />
             </Form.Group>
 
+            {/* College */}
             <Form.Group className="mb-4" controlId="userSchoolOrCollege">
               <Form.Label>College</Form.Label>
               <Form.Control
-                type="text"
-                placeholder="Enter your college name"
-                name="userSchoolOrCollege"
-                value={formData.userSchoolOrCollege}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
-
-            {/* User Type */}
-            <Form.Group className="mb-4" controlId="userType">
-              <Form.Label>User Type</Form.Label>
-              <Form.Control
                 as="select"
-                name="userType"
-                value={formData.userType}
-                onChange={handleChange}
+                value={isCustomCollege ? "custom" : formData.userSchoolOrCollege}
+                onChange={handleCollegeChange}
                 required
               >
-                <option value="SchoolStudent">School Student</option>
-                <option value="CollegeStudent">College Student</option>
+                <option value="" disabled>
+                  -- Select College --
+                </option>
+                {colleges.map((college, index) => (
+                  <option key={index} value={college}>
+                    {college}
+                  </option>
+                ))}
+                <option value="custom">Add a new college</option>
               </Form.Control>
+              {isCustomCollege && (
+                <Form.Control
+                  type="text"
+                  placeholder="Enter college name"
+                  value={customCollege}
+                  onChange={handleCustomCollegeChange}
+                  className="mt-3"
+                  required
+                />
+              )}
             </Form.Group>
 
-             {/* Country Code with Mobile Number */}
-             <Form.Group className="mb-4" controlId="userMob">
+            {/* Mobile Number */}
+            <Form.Group className="mb-4" controlId="userMob">
               <Form.Label>Mobile Number</Form.Label>
               <PhoneInput
                 international
-                defaultCountry="US" // You can set the default country here (change as needed)
+                defaultCountry="US"
                 value={formData.userMob}
                 onChange={(value) => setFormData({ ...formData, userMob: value })}
                 placeholder="Enter your mobile number"
-                name="userMob"
                 required
               />
-              <Form.Text className="text-muted">
-                Enter a valid mobile number (e.g., +1234567890).
-              </Form.Text>
             </Form.Group>
 
-
+            {/* Password */}
             <Form.Group className="mb-4" controlId="userPassword">
               <Form.Label>Password</Form.Label>
               <div className="input-group">
                 <Form.Control
-                  type={userPasswordVisible ? 'text' : 'userPassword'}
-                  placeholder="Enter userPassword"
+                  type={passwordVisible ? "text" : "password"}
+                  placeholder="Enter password"
                   name="userPassword"
                   value={formData.userPassword}
                   onChange={handleChange}
+                  required
                 />
-                <div className="input-group-append">
-                  <Button
-                    variant="link"
-                    onClick={toggleuserPasswordVisibility}
-                    type="button"
-                    className="eye-icon-btn"
-                  >
-                    {userPasswordVisible ? <FaEyeSlash /> : <FaEye />}
-                  </Button>
-                </div>
+                <Button
+                  variant="link"
+                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  className="eye-icon-btn"
+                >
+                  {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+                </Button>
               </div>
             </Form.Group>
 
-            <Form.Group className="mb-4" controlId="confirmuserPassword">
+            {/* Confirm Password */}
+            <Form.Group className="mb-4" controlId="confirmPassword">
               <Form.Label>Confirm Password</Form.Label>
               <div className="input-group">
                 <Form.Control
-                  type={confirmuserPasswordVisible ? 'text' : 'userPassword'}
-                  placeholder="Confirm userPassword"
-                  name="confirmuserPassword"
-                  value={formData.confirmuserPassword}
+                  type={confirmPasswordVisible ? "text" : "password"}
+                  placeholder="Confirm password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
                   onChange={handleChange}
+                  required
                 />
-                <div className="input-group-append">
-                  <Button
-                    variant="link"
-                    onClick={toggleConfirmuserPasswordVisibility}
-                    type="button"
-                    className="eye-icon-btn"
-                  >
-                    {confirmuserPasswordVisible ? <FaEyeSlash /> : <FaEye />}
-                  </Button>
-                </div>
+                <Button
+                  variant="link"
+                  onClick={() =>
+                    setConfirmPasswordVisible(!confirmPasswordVisible)
+                  }
+                  className="eye-icon-btn"
+                >
+                  {confirmPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                </Button>
               </div>
             </Form.Group>
 
-            {/* <Form.Group className="mb-4">
-              <div className="gender-details">
-                <Form.Label className="gender-title">Gender</Form.Label>
-
-                <div className="category d-flex justify-content-between">
-                  <Form.Check
-                    type="radio"
-                    id="dot-1"
-                    name="gender"
-                    label="Male"
-                    className="gender-radio"
-                  />
-                  <Form.Check
-                    type="radio"
-                    id="dot-2"
-                    name="gender"
-                    label="Female"
-                    className="gender-radio"
-                  />
-                  <Form.Check
-                    type="radio"
-                    id="dot-3"
-                    name="gender"
-                    label="Prefer not to say"
-                    className="gender-radio"
-                  />
-                </div>
-              </div>
-            </Form.Group> */}
-
-            <div className="text-center text-md-start mt-4 pt-2">
-              <Button variant="primary" size="lg" type="submit" className="mb-0 px-5">
-                Register
-              </Button>
-              <p className="small fw-bold mt-2 pt-1 mb-2">
-                Already have an account?{' '}
-                <a
-                  href="#!"
-                  onClick={(e) => {
-                    e.preventDefault(); // Prevents default behavior
-                    navigate('/login');
-                  }}
-                  className="link-danger"
-                >
-                  Login
-                </a>
-              </p>
-
-            </div>
+            <Button
+              variant="primary"
+              size="lg"
+              type="submit"
+              className="mb-0 px-5"
+            >
+              Register
+            </Button>
+            <p className="small fw-bold mt-2 pt-1 mb-2">
+              Already have an account?{" "}
+              <a
+                href="#!"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate("/login");
+                }}
+                className="link-danger"
+              >
+                Login
+              </a>
+            </p>
           </Form>
-          <div className="d-flex align-items-center">
-            <hr className="hr-divider flex-grow-1" />
+          <div className="d-flex align-items-center mt-4">
+            <hr className="flex-grow-1" />
             <span>OR</span>
-            <hr className="hr-divider flex-grow-1" />
+            <hr className="flex-grow-1" />
           </div>
-
-
-          {/* Google Login Button */}
-          <div className="text-center mt-4">
-            <GoogleLogin 
-              onSuccess={handleGoogleLogin} // Handle success
-              onError={() => console.log('Google Login Failed')} // Handle error
-            />
-          </div>
+          <GoogleLogin
+            onSuccess={handleGoogleLogin}
+            onError={() => alert("Google login failed.")}
+          />
         </Col>
+        
       </Row>
     </Container>
   );
 }
 
 export default Register;
-
-
