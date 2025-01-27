@@ -3,15 +3,15 @@ import { Table, Button, Container } from "reactstrap";
 import axios from "axios";
 import api from "./api";
 
-
 const ResultsPage = () => {
   const [results, setResults] = useState([]);
+  const [statistics, setStatistics] = useState(null); // State to store statistics
   const [currentPage, setCurrentPage] = useState(1);
   const resultsPerPage = 10;
 
   const getTestIdFromHash = () => {
     const hash = window.location.hash;
-    const params = new URLSearchParams(hash.substring(hash.indexOf('?')));
+    const params = new URLSearchParams(hash.substring(hash.indexOf("?")));
     return params.get("testId");
   };
 
@@ -23,14 +23,13 @@ const ResultsPage = () => {
       return;
     }
 
-    const fetchData = async () => {
+    // Fetch test results
+    const fetchTestResults = async () => {
       try {
         const response = await api.get(
           `/test-results/showTestResult?testId=${testId}`
         );
-    console.log("Full response:", response);
-    console.log("Response data:", response.data);
-    const data = response.data;
+        const data = response.data;
         if (Array.isArray(data)) {
           setResults(data); // Only set results if data is an array
         } else {
@@ -42,9 +41,24 @@ const ResultsPage = () => {
         setResults([]); // Fallback to an empty array
       }
     };
-    fetchData();
-  }, []);
 
+    // Fetch statistics
+    const fetchStatistics = async () => {
+      try {
+        const response = await api.get(
+          `/result-statistics/get-result?testId=${testId}`
+        );
+        console.log(response.data)
+        setStatistics(response.data);
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
+        setStatistics(null); // Fallback to null
+      }
+    };
+
+    fetchTestResults();
+    fetchStatistics();
+  }, []);
 
   const totalPages = Math.ceil(results.length / resultsPerPage);
   const startIndex = (currentPage - 1) * resultsPerPage;
@@ -62,6 +76,18 @@ const ResultsPage = () => {
   return (
     <Container>
       <h2 className="text-center my-4">Student Results</h2>
+
+      {/* Statistics Division */}
+      {statistics && (
+        <div className="mb-4 p-3 border rounded">
+          <h5>Test Statistics</h5>
+          <p>Total Attempts: {statistics.totalAttempts}</p>
+          <p>Highest Marks: {statistics.highestMarks}</p>
+          <p>Average Marks: {statistics.avgMarks}</p>
+          <p>Average Time Duration: {statistics.avgTimeDuration} mins</p>
+        </div>
+      )}
+
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -82,7 +108,11 @@ const ResultsPage = () => {
               <td>{result.marks}</td>
               <td>
                 {result.answerSheetLink ? (
-                  <a href={result.answerSheetLink} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={result.answerSheetLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     View
                   </a>
                 ) : (
